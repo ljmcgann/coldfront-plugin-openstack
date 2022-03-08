@@ -36,7 +36,11 @@ class Command(BaseCommand):
 
     def register_resource_type(self):
         resource_models.ResourceType.objects.get_or_create(
-            name='OpenStack', description='OpenStack Cloud')
+            name='OpenStack', description='OpenStack Cloud'
+        )
+        resource_models.ResourceType.objects.get_or_create(
+            name='OpenShift', description='OpenShift Cloud'
+        )
 
     def handle(self, *args, **options):
         self.register_resource_type()
