@@ -6,7 +6,11 @@ import time
 from coldfront.core.allocation.models import (Allocation,
                                               AllocationUser)
 
-from coldfront_plugin_openstack import attributes, base, openstack, utils
+from coldfront_plugin_openstack import (attributes,
+                                        base,
+                                        openstack,
+                                        openshift,
+                                        utils)
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +25,8 @@ UNIT_QUOTA_MULTIPLIERS = {
         attributes.QUOTA_VOLUMES: 2,
         attributes.QUOTA_VOLUMES_GB: 100,
         attributes.QUOTA_FLOATING_IPS: 0,
-    }
+    },
+    'openshift': dict()
 }
 
 # The amount of quota that every projects gets,
@@ -30,13 +35,15 @@ UNIT_QUOTA_MULTIPLIERS = {
 STATIC_QUOTA = {
     'openstack': {
         attributes.QUOTA_FLOATING_IPS: 2,
-    }
+    },
+    'openshift': dict()
 }
 
 
 def find_allocator(allocation) -> base.ResourceAllocator:
     allocators = {
         'openstack': openstack.OpenStackResourceAllocator,
+        'openshift': openshift.OpenShiftResourceAllocator,
     }
     # TODO(knikolla): It doesn't seem to be possible to select multiple resources
     # when requesting a new allocation, so why is this multivalued?

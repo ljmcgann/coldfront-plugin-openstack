@@ -59,6 +59,17 @@ class TestBase(TestCase):
         )
         return Resource.objects.get(name=resource_name)
 
+    @staticmethod
+    def new_openshift_resource(name=None, auth_url=None) -> Resource:
+        resource_name = name or uuid.uuid4().hex
+
+        call_command(
+            'add_openshift_resource',
+            name=resource_name,
+            auth_url=auth_url or 'https://onboarding-onboarding.cluster.local',
+        )
+        return Resource.objects.get(name=resource_name)
+
     def new_project(self, title=None, pi=None) -> Project:
         title = title or uuid.uuid4().hex
         pi = pi or self.new_user()
