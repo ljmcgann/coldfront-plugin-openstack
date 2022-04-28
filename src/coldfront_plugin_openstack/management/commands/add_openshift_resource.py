@@ -7,7 +7,9 @@ from coldfront.core.resource.models import (Resource,
                                             ResourceType)
 
 from coldfront_plugin_openstack import attributes
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     help = 'Create OpenShift resource'
@@ -31,6 +33,7 @@ class Command(BaseCommand):
             is_allocatable=True
         )
 
+        logger.debug('in create openshift resource')
         ResourceAttribute.objects.get_or_create(
             resource_attribute_type=ResourceAttributeType.objects.get(
                 name=attributes.RESOURCE_AUTH_URL),

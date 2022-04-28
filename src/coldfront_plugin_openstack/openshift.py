@@ -1,5 +1,6 @@
 import functools
 import json
+import logging
 import os
 import requests
 from requests.auth import HTTPBasicAuth
@@ -8,6 +9,7 @@ import uuid
 
 from coldfront_plugin_openstack import attributes, base, utils
 
+logger = logging.getLogger(__name__)
 
 class ApiException(Exception):
     def __init__(self, message):
@@ -96,8 +98,14 @@ class OpenShiftResourceAllocator(base.ResourceAllocator):
 
     def _create_project(self, project_name, project_id):
         url = f"{self.auth_url}/projects/{project_id}"
-        payload = {"displayName": project_name}
-        r = self.session.put(url, data=json.dumps(payload))
+        headers = {'Content-type': 'application/json'}
+        annotations = {'cf_project_id': str(self.allocation.project_id),
+                       'cf_pi': self.allocation.project.pi.username}
+
+        payload = {"displayName": project_name,
+                   "annotations": annotations}
+        logger.warning(str(payload))
+        r = self.session.put(url, data=json.dumps(payload), headers=headers)
         self.check_response(r)
 
     def _get_role(self, username, project_id):
