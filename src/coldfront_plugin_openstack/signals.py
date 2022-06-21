@@ -1,4 +1,5 @@
 import os
+import logging
 
 from django.dispatch import receiver
 from django_q.tasks import async_task
@@ -13,6 +14,8 @@ from coldfront.core.allocation.signals import (allocation_activate,
                                                allocation_remove_user,
                                                allocation_change_approved)
 
+logger = logging.getLogger(__name__)
+
 
 def is_async():
     # Note(knikolla): The presence of the REDIS_HOST env variable signifies
@@ -25,6 +28,7 @@ def is_async():
 @receiver(allocation_change_approved)
 def activate_allocation_receiver(sender, **kwargs):
     allocation_pk = kwargs.get('allocation_pk')
+    logger.warning("signal activate" + str(allocation_pk))
     # Note(knikolla): Only run this task using Django-Q if a qcluster has
     # been configured.
     if is_async():
@@ -36,6 +40,7 @@ def activate_allocation_receiver(sender, **kwargs):
 @receiver(allocation_disable)
 def allocation_disable_receiver(sender, **kwargs):
     allocation_pk = kwargs.get('allocation_pk')
+    logger.warning("signal disable" + str(allocation_pk))
     disable_allocation(allocation_pk)
 
 

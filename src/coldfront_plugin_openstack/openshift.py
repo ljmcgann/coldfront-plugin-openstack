@@ -10,6 +10,8 @@ from simplejson.errors import JSONDecodeError
 
 from coldfront_plugin_openstack import attributes, base, utils
 
+logger = logging.getLogger(__name__)
+
 QUOTA_KEY_MAPPING = {
     attributes.QUOTA_LIMITS_CPU: lambda x: {":limits.cpu": f"{x * 1000}m"},
     attributes.QUOTA_LIMITS_MEMORY: lambda x: {":limits.memory": f"{x}Mi"},
@@ -86,6 +88,7 @@ class OpenShiftResourceAllocator(base.ResourceAllocator):
         pass
 
     def disable_project(self, project_id):
+        logger.warning("deleting project" + project_id)
         url = f"{self.auth_url}/projects/{project_id}"
         r = self.session.delete(url)
         self.check_response(r)
@@ -141,6 +144,7 @@ class OpenShiftResourceAllocator(base.ResourceAllocator):
 
         payload = {"displayName": project_name,
                    "annotations": annotations}
+        logger.warning("in _create_project")
         r = self.session.put(url, data=json.dumps(payload), headers=headers)
         self.check_response(r)
 

@@ -108,9 +108,11 @@ def activate_allocation(allocation_pk):
 
 def disable_allocation(allocation_pk):
     allocation = Allocation.objects.get(pk=allocation_pk)
-
+    logger.warning("inside disable_allocation")
     if allocator := find_allocator(allocation):
+        logger.warning("if")
         if project_id := allocation.get_attribute(attributes.ALLOCATION_PROJECT_ID):
+            logger.warning("if if")
             allocator.disable_project(project_id)
         else:
             logger.warning('No project has been created. Nothing to disable.')
